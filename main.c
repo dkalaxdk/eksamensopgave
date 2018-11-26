@@ -56,8 +56,12 @@ struct result parser(FILE *file,struct result current_result) {
                 current_result.biker_position,current_result.bike_time);
     /*Handle middlenames*/
     for (i = strlen(current_result.biker_last_name); 0 <= i ; --i) {
+        /*Starts by checking if a letter (Starting from the back) is uppercase*/
         if (isupper(current_result.biker_last_name[i])) {
+            /*Checks whether the next letter is a small letter.
+             * If this letter is a small letter the code has hit the middlename.*/
             if(islower(current_result.biker_last_name[i-1])){
+                /*Copies the remainder of the string into biker_last_name, hereby updating the string, to only contain capitalized lastnames.*/
                 strcpy(current_result.biker_last_name, current_result.biker_last_name + i);
                 return current_result;
             }
@@ -76,6 +80,10 @@ int lines_counter(FILE *file) {
         }
     }
     return lines;
+}
+
+void point_counter() {
+
 }
 
 void itallian_bikers() {
