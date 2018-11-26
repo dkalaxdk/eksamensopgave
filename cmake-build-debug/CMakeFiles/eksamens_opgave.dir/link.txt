@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/eksamens_opgave.dir/main.c.o  -o eksamens_opgave 
