@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <string.h>
+#include <ctype.h>
 
 struct result {
     char    race_name[17];
@@ -8,7 +10,7 @@ struct result {
     int     biker_age;
     char    biker_team[4];
     char    biker_nation[4];
-    int     biker_position;
+    char    biker_position[4];
     char    bike_time[10];
 }result;
 struct result parser(FILE *file,struct result current_result);
@@ -26,7 +28,7 @@ int main() {
 
     rewind(file);
 
-    for (i = 270; i < lines; ++i) {
+    for (i = 0; i < lines; ++i) {
         results_array[i]=parser(file,results_array[i]);
     }
 
@@ -40,19 +42,27 @@ int main() {
 }
 
 struct result parser(FILE *file,struct result current_result) {
-    fscanf(file," %s "
-                " \"%[a-zA-Z] "
-                " %[A-Z ]\" "
+    int i;
+    /*ScanF for basic information*/
+    fscanf(file," %[a-zA-Z] "
+                " \"%[a-zA-Z-] "
+                " %[a-zA-Z ']\" "
                 "| %d "
                 " %s "
                 " %s |"
-                " %d "
-                " %[0-9:]" , current_result.race_name,current_result.biker_first_name,current_result.biker_last_name,
+                " %s "
+                " %[0-9:-]" , current_result.race_name,current_result.biker_first_name,current_result.biker_last_name,
                 &current_result.biker_age,current_result.biker_team,current_result.biker_nation,
-                &current_result.biker_position,current_result.bike_time);
-    printf("Current result: %s \n",current_result.biker_last_name);
-    printf("Current result. racename: %s \n",current_result.race_name);
-
+                current_result.biker_position,current_result.bike_time);
+    /*Handle middlenames*/
+    for (i = strlen(current_result.biker_last_name); 0 <= i ; --i) {
+        if (isupper(current_result.biker_last_name[i])) {
+            if(islower(current_result.biker_last_name[i-1])){
+                strcpy(current_result.biker_last_name, current_result.biker_last_name + i);
+                return current_result;
+            }
+        }
+    }
     return current_result;
 }
 

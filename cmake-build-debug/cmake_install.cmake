@@ -1,4 +1,4 @@
-# Install script for directory: /home/alexandern/CLionProjects/SkoleProjekter/afleveringsopgaver/eksamens_opgave
+# Install script for directory: /home/alexandern/CLionProjects/SkoleProjekter/afleveringsopgaver/eksamens_opgave_git
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/alexandern/CLionProjects/SkoleProjekter/afleveringsopgaver/eksamens_opgave/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/alexandern/CLionProjects/SkoleProjekter/afleveringsopgaver/eksamens_opgave_git/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
