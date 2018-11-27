@@ -2,52 +2,65 @@
 #include <malloc.h>
 #include <string.h>
 #include <ctype.h>
+#define MAX_NAME_SIZE 30
+
+struct total_points {
+    char    biker_first_name[MAX_NAME_SIZE];
+    char    biker_last_name[MAX_NAME_SIZE];
+    char    biker_team[MAX_NAME_SIZE];
+    int     points;
+
+};
 
 struct result {
-    char    race_name[17];
-    char    biker_first_name[20];
-    char    biker_last_name[20];
-    int     biker_age;
+    char    race_name[MAX_NAME_SIZE];
+    char    biker_first_name[MAX_NAME_SIZE];
+    char    biker_last_name[MAX_NAME_SIZE];
+    double  biker_age;
     char    biker_team[4];
     char    biker_nation[4];
     char    biker_position[4];
     char    bike_time[10];
+
 }result;
-struct result parser(FILE *file,struct result current_result);
-int lines_counter(FILE *file);
+
+
+struct result parser(struct result current_result,FILE *file);
+int lines_counter();
+struct result point_counter(struct result *result,const int lines);
+void itallian_bikers(struct result result[]);
 
 int main() {
     int i, lines =0;
     struct result *results_array;
     FILE *file;
     file = fopen("cykelloeb.txt","r");
-
-
-    lines = lines_counter(file);
+    lines=lines_counter();
     results_array = (struct result *) calloc (lines, sizeof(struct result));
 
-    rewind(file);
-
+    /*Populating array of results*/
     for (i = 0; i < lines; ++i) {
-        results_array[i]=parser(file,results_array[i]);
+        results_array[i]=parser(results_array[i],file);
+        /*printf("Result test: %s \n",results_array[i].biker_first_name);*/
     }
+    fclose(file);
 
-    printf("Result test: %s \n",results_array[1].biker_first_name);
+    itallian_bikers(results_array);
 
-
-
+    /*point_counter(results_array,lines);*/
 
 
     return 0;
 }
 
-struct result parser(FILE *file,struct result current_result) {
+struct result parser(struct result current_result,FILE *file) {
     int i;
+
     /*ScanF for basic information*/
     fscanf(file," %[a-zA-Z] "
                 " \"%[a-zA-Z-] "
                 " %[a-zA-Z ']\" "
-                "| %d "
+                "| %lf "
                 " %s "
                 " %s |"
                 " %s "
@@ -70,7 +83,9 @@ struct result parser(FILE *file,struct result current_result) {
     return current_result;
 }
 
-int lines_counter(FILE *file) {
+int lines_counter() {
+    FILE *file;
+    file = fopen("cykelloeb.txt","r");
     int lines=0;
     char test;
     while (!feof(file)) {
@@ -79,15 +94,27 @@ int lines_counter(FILE *file) {
             lines ++;
         }
     }
+    fclose(file);
     return lines;
 }
 
-void point_counter() {
+struct result point_counter(struct result *result,const int lines) {
+    int i;
+    for (i = 0; i < lines; ++i) {
 
+    }
+    return *result;
 }
 
-void itallian_bikers() {
+void itallian_bikers(struct result result[]) {
+    int i;
+    printf("Itallian bikers and their times: \n");
+    for (i = 0; i <lines_counter(); ++i) {
+        if (strcmp(result[i].biker_nation,"ITA")) {
+            printf("The biker: %s %s | %s | %s |\n",result[i].biker_first_name,result[i].biker_last_name,result[i].race_name,result[i].bike_time);
+        }
 
+    }
 }
 
 void danish_bikers() {
