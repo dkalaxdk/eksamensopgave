@@ -6,6 +6,7 @@
 
 #define MAX_NAME_SIZE 30
 #define MAXIMUM_FILE_LINES 2000
+#define POS_COUNTRY_TEAM_LENGTH 4
 /*Enum declaration*/
 enum race_locations {
     ParisRoubaix = 0, AmstelGoldRace = 1, LaFlecheWallonne = 2, LiegeBastogneLiege = 3
@@ -15,7 +16,7 @@ struct race_stats {
     int participated;
     int number_of_participants;
     int points;
-    char biker_position[4];
+    char biker_position[POS_COUNTRY_TEAM_LENGTH];
     char race_time[10];
     char racename[MAX_NAME_SIZE];
 } race_stats;
@@ -24,8 +25,8 @@ struct racer {
     char biker_first_name[MAX_NAME_SIZE];
     char biker_last_name[MAX_NAME_SIZE];
     double biker_age;
-    char biker_team[4];
-    char biker_nation[4];
+    char biker_team[POS_COUNTRY_TEAM_LENGTH];
+    char biker_nation[POS_COUNTRY_TEAM_LENGTH];
     int total_points;
     int time_in_PR_AG;
     char time_in_PR_AG_string[14];
@@ -37,9 +38,9 @@ struct input_lines {
     char biker_first_name[MAX_NAME_SIZE];
     char biker_last_name[MAX_NAME_SIZE];
     double biker_age;
-    char biker_team[4];
-    char biker_nation[4];
-    char biker_position[4];
+    char biker_team[POS_COUNTRY_TEAM_LENGTH];
+    char biker_nation[POS_COUNTRY_TEAM_LENGTH];
+    char biker_position[POS_COUNTRY_TEAM_LENGTH];
     char bike_time[10];
 } input_lines;
 
@@ -50,7 +51,7 @@ int string_counter(char *search_string);
 
 void italian_bikers(struct racer result[]);
 
-void danish_bikers(struct racer input[], struct racer output[], int *races_participated_in);
+void danish_bikers(struct racer input[], struct racer danes_array[], int *races_participated_in);
 
 void danes_printer(struct racer input[], int races_participated_in[], int number_of_danes);
 
@@ -64,6 +65,8 @@ int sorter(const void *a, const void *b);
 
 void
 race_copier(struct input_lines input[], struct racer output[], int i, int j, int participants, char racename[], int k);
+
+void race_populator(struct input_lines input[], struct racer output[], int k, int i);
 
 int point_calculator(struct input_lines input, int m);
 
@@ -87,53 +90,117 @@ void shortest_time_printer(struct racer input[]);
 
 void seconds_to_string_converter(struct racer input[]);
 
+void middlename_clearer(struct input_lines current_result[], int i);
+
 void average_age(struct racer input[]);
 
-int main() {
+void assignment_1(struct racer races_array[]);
+
+void assignment_2(struct racer races_array[]);
+
+void assignment_3(struct racer races_array[]);
+
+void assignment_4(struct racer races_array[]);
+
+void assignment_5(struct racer races_array[]);
+
+
+int main(int argc, char *argv[]) {
     struct input_lines *input_arrary;
     struct racer *races_array;
-    struct racer *danes;
     int lines;
     char input[2] = "\n";
-    int *races_participated_in;
-    int number_of_danes;
-
+    int user_input;
 
     lines = string_counter(input);
     races_array = (struct racer *) calloc(lines, sizeof(struct racer));
     input_arrary = (struct input_lines *) calloc(lines, sizeof(struct input_lines));
 
-
     /*Populating array of results*/
     parser(input_arrary);
-    /*printf("Result test: %s \n",input_arrary[i].biker_first_name);*/
     cleaner(input_arrary, races_array);
-    number_of_danes = number_of_nationality(races_array);
-
     free(input_arrary);
-    races_participated_in = (int *) calloc(number_of_danes, sizeof(int));
-    danes = (struct racer *) calloc(number_of_danes, sizeof(struct racer));
 
-    italian_bikers(races_array);
-    danish_bikers(races_array, danes, races_participated_in);
-    danes_printer(danes, races_participated_in, number_of_danes);
-    free(danes);
+    if (argc == 2) {
+        if (strcmp(argv[1], "--print") == 0) {
+            assignment_1(races_array);
+            assignment_2(races_array);
+            assignment_3(races_array);
+            assignment_4(races_array);
+            assignment_5(races_array);
+        }
+    }
+    do {
+        printf("Please enter your choice of: \n \n"
+               "Assignment 1 (Itallian bikers) \n"
+               "Assignment 2 (Regarding danish bikers) \n"
+               "Assignment 3 (Top ten racers) \n"
+               "Assignment 4 (Shortest time in ParisRoubaix and AmstelGold) \n"
+               "Assignment 5 (Average age of riders having finished top 10) \n"
+               "A number below 1 to exit program. \n");
+        scanf("%d", &user_input);
+        switch (user_input) {
+            case 1:
+                assignment_1(races_array);
+                break;
+            case 2:
+                assignment_2(races_array);
+                break;
+            case 3:
+                assignment_3(races_array);
+                break;
+            case 4:
+                assignment_4(races_array);
+                break;
+            case 5:
+                assignment_5(races_array);
+                break;
+            default:
+                exit(1);
+        }
+    } while (user_input > 0);
 
-    top_ten(races_array);
-    shortest_time_two_races(races_array);
-
-    average_age(races_array);
 
     return 0;
 }
 
 /*Functions */
+void assignment_1(struct racer races_array[]) {
+    italian_bikers(races_array);
+
+}
+
+void assignment_2(struct racer races_array[]) {
+    /*Assignment regarding the number of danish riders.*/
+    int number_of_danes;
+    int *races_participated_in;
+    struct racer *danes;
+    number_of_danes = number_of_nationality(races_array);
+
+    races_participated_in = (int *) calloc(number_of_danes, sizeof(int));
+    danes = (struct racer *) calloc(number_of_danes, sizeof(struct racer));
+    danish_bikers(races_array, danes, races_participated_in);
+    danes_printer(danes, races_participated_in, number_of_danes);
+    free(danes);
+}
+
+void assignment_3(struct racer races_array[]) {
+    top_ten(races_array);
+}
+
+void assignment_4(struct racer races_array[]) {
+    shortest_time_two_races(races_array);
+}
+
+void assignment_5(struct racer races_array[]) {
+    average_age(races_array);
+}
+
 int string_counter(char *search_string) {
-    FILE *file;
-    file = fopen("cykelloeb.txt", "r");
     int n = 0;
     char line[MAXIMUM_FILE_LINES];
-
+    FILE *file;
+    file = fopen("cykelloeb.txt", "r");
     while (fgets(line, MAXIMUM_FILE_LINES, file) != NULL) {
         if (strstr(line, search_string) != NULL) {
             n++;
@@ -144,9 +211,9 @@ int string_counter(char *search_string) {
 }
 
 void parser(struct input_lines current_result[]) {
+    int i, lines;
     FILE *file;
     file = fopen("cykelloeb.txt", "r");
-    int i, lines;
     lines = string_counter("\n");
     for (i = 0; i < lines; ++i) {
         /*ScanF for basic information*/
@@ -162,77 +229,78 @@ void parser(struct input_lines current_result[]) {
                &current_result[i].biker_age, current_result[i].biker_team, current_result[i].biker_nation,
                current_result[i].biker_position, current_result[i].bike_time);
         /*Handle middlenames*/
-        //j=strlen(current_result[i].biker_last_name);
-        //while (!islower(current_result[i].biker_last_name[j])) {
-        //    j--;
-        //}
+        middlename_clearer(current_result, i);
     }
     fclose(file);
 }
 
+void middlename_clearer(struct input_lines current_result[], int i) {
+    int j;
+    j = strlen(current_result[i].biker_last_name);
+    /*Itterates through the bikers last name from behind, then splits the string when it hits a midddlename.
+     * (The middlename defined by the first lowercase letter, as all lastnames are in uppercase)*/
+    while (!isupper(current_result[i].biker_last_name[j])) {
+        if (!isupper(current_result[i].biker_last_name[j - 1])) {
+            strcpy(current_result[i].biker_last_name, current_result[i].biker_last_name - j);
+        }
+        j--;
+    }
+}
+
 void cleaner(struct input_lines input[], struct racer output[]) {
-    int ParisRoubaoix_participants, AmstelGoldRace_participants,
-            LaFlecheWallonne_participants, LiegeBastogneLiege_participants,
-            i, k = -1, lines;
-
-
-    ParisRoubaoix_participants = string_counter("ParisRoubaix");
-    AmstelGoldRace_participants = string_counter("AmstelGoldRace");
-    LaFlecheWallonne_participants = string_counter("LaFlecheWallonne");
-    LiegeBastogneLiege_participants = string_counter("LiegeBastogneLiege");
+    int i, k = -1, lines;
+    /*The cleaner takes the input_array and sorts it into the new array: racer, this is done to make it easier to
+     * finnish the later assignments based on the new structure,*/
     lines = string_counter("\n");
-
-
-    /*Starts by sorting array*/
     qsort(input, lines, sizeof(input_lines), sorter);
-    /*Start of setup regarding race_stats structs, these lines insert the required information into:
-     * Number of participants
-     * Race location
-     *
+    /*The qsort above sorts the input array in alphabetic order of lastnames.
+     * after this the if statement below uses the functions to combine dublicates and merge these, to ensure only one
+     * representation of each rider.
      *  */
     for (i = 0; i <= lines; ++i) {
         if (strcmp(input[i].biker_first_name, input[i - 1].biker_first_name) == 0) {
-            if (strcmp(input[i].race_name, "ParisRoubaix") == 0) {
-                race_copier(input, output, k, ParisRoubaix, ParisRoubaoix_participants, "ParisRoubaix", i);
-            } else if (strcmp(input[i].race_name, "AmstelGoldRace") == 0) {
-                race_copier(input, output, k, AmstelGoldRace, AmstelGoldRace_participants, "AmstelGoldRace", i);
-            } else if (strcmp(input[i].race_name, "LaFlecheWallonne") == 0) {
-                race_copier(input, output, k, LaFlecheWallonne, LaFlecheWallonne_participants, "LaFlecheWallonne", i);
-            } else if (strcmp(input[i].race_name, "LiegeBastogneLiege") == 0) {
-                race_copier(input, output, k, LiegeBastogneLiege, LiegeBastogneLiege_participants,
-                            "LiegeBastogneLiege", i);
-            }
+            race_populator(input, output, k, i);
         } else {
             k++;
             cleaner_copier(input, output, k, i);
-            if (strcmp(input[i].race_name, "ParisRoubaix") == 0) {
-                race_copier(input, output, k, ParisRoubaix, ParisRoubaoix_participants, "ParisRoubaix", i);
-            } else if (strcmp(input[i].race_name, "AmstelGoldRace") == 0) {
-                race_copier(input, output, k, AmstelGoldRace, AmstelGoldRace_participants, "AmstelGoldRace", i);
-            } else if (strcmp(input[i].race_name, "LaFlecheWallonne") == 0) {
-                race_copier(input, output, k, LaFlecheWallonne, LaFlecheWallonne_participants, "LaFlecheWallonne", i);
-            } else if (strcmp(input[i].race_name, "LiegeBastogneLiege") == 0) {
-                race_copier(input, output, k, LiegeBastogneLiege, LiegeBastogneLiege_participants,
-                            "LiegeBastogneLiege", i);
-            }
-
+            race_populator(input, output, k, i);
         }
     }
 }
 
 void cleaner_copier(struct input_lines input[], struct racer output[], int k, int i) {
-    /*Check igennem arrayet, checker hvorvidt navnet er i arrayet allerede, ellers tilføjes det til arrayet.*/
-    /*Person inputs*/
+    /*Adds persons not already in the race array, to the race array.*/
     strcpy(output[k].biker_first_name, input[i].biker_first_name);
     strcpy(output[k].biker_last_name, input[i].biker_last_name);
     strcpy(output[k].biker_team, input[i].biker_team);
     strcpy(output[k].biker_nation, input[i].biker_nation);
     output[k].biker_age = input[i].biker_age;
-    //printf("String test %s \n",output[j].biker_nation);
+}
+
+void race_populator(struct input_lines input[], struct racer output[], int k, int i) {
+    int ParisRoubaoix_participants, AmstelGoldRace_participants,
+            LaFlecheWallonne_participants, LiegeBastogneLiege_participants;
+    /*Checks what race the itteration is taken from*/
+    ParisRoubaoix_participants = string_counter("ParisRoubaix");
+    AmstelGoldRace_participants = string_counter("AmstelGoldRace");
+    LaFlecheWallonne_participants = string_counter("LaFlecheWallonne");
+    LiegeBastogneLiege_participants = string_counter("LiegeBastogneLiege");
+    if (strcmp(input[i].race_name, "ParisRoubaix") == 0) {
+        race_copier(input, output, k, ParisRoubaix, ParisRoubaoix_participants, "ParisRoubaix", i);
+    } else if (strcmp(input[i].race_name, "AmstelGoldRace") == 0) {
+        race_copier(input, output, k, AmstelGoldRace, AmstelGoldRace_participants, "AmstelGoldRace", i);
+    } else if (strcmp(input[i].race_name, "LaFlecheWallonne") == 0) {
+        race_copier(input, output, k, LaFlecheWallonne, LaFlecheWallonne_participants, "LaFlecheWallonne", i);
+    } else if (strcmp(input[i].race_name, "LiegeBastogneLiege") == 0) {
+        race_copier(input, output, k, LiegeBastogneLiege, LiegeBastogneLiege_participants,
+                    "LiegeBastogneLiege", i);
+    }
 }
 
 void
 race_copier(struct input_lines input[], struct racer output[], int k, int j, int participants, char racename[], int i) {
+    /*This function is called whenever a rider allready exists within the sorted race_array struct, and therefor it
+    * adds the race to the rider.*/
     strcpy(output[k].race_stats[j].biker_position, input[i].biker_position);
     strcpy(output[k].race_stats[j].race_time, input[i].bike_time);
     output[k].race_stats[j].number_of_participants = participants;
@@ -242,17 +310,18 @@ race_copier(struct input_lines input[], struct racer output[], int k, int j, int
 }
 
 
-void italian_bikers(struct racer result[]) {
+void italian_bikers(struct racer input[]) {
+    /*This function finds and returns all itallian bikers, over the age of thirty, int the array, input (race_array)*/
     int i, k = 0, lines;
     lines = string_counter("\n");
     printf("Italian bikers and their times: \n \n");
     for (i = 0; i < lines; ++i) {
-        if (strcmp(result[i].biker_nation, "ITA") == 0 && result[i].biker_age > 30) {
-            printf(" The driver %s %s participated in:  \n", result[i].biker_first_name, result[i].biker_last_name);
+        if (strcmp(input[i].biker_nation, "ITA") == 0 && input[i].biker_age > 30) {
+            printf(" The driver %s %s participated in:  \n", input[i].biker_first_name, input[i].biker_last_name);
             for (k = 0; k <= LiegeBastogneLiege; ++k) {
-                if (result[i].race_stats[k].participated == 1) {
-                    printf("    %s with the position %s and time %s \n", result[i].race_stats[k].racename,
-                           result[i].race_stats[k].biker_position, result[i].race_stats[k].race_time);
+                if (input[i].race_stats[k].participated == 1) {
+                    printf("    %s with the position %s and time %s \n", input[i].race_stats[k].racename,
+                           input[i].race_stats[k].biker_position, input[i].race_stats[k].race_time);
                 }
             }
         }
@@ -260,7 +329,8 @@ void italian_bikers(struct racer result[]) {
 }
 
 int sorter(const void *a, const void *b) {
-    /* Sorter taken from http://www.anyexample.com/programming/c/qsort__sorting_array_of_strings__integers_and_structs.xml */
+    /* Sorter taken from http://www.anyexample.com/programming/c/qsort__sorting_array_of_strings__integers_and_structs.xml
+     * Assist to qsort, sorting from cleaner*/
 
     struct input_lines *ia = (struct input_lines *) a;
     struct input_lines *ib = (struct input_lines *) b;
@@ -268,6 +338,7 @@ int sorter(const void *a, const void *b) {
 }
 
 int point_calculator(struct input_lines input, int m) {
+    /*Calculates the a biker, based on on the one race passed through input*/
     int i, participation_points = 0, placements_points = 0, podium_points = 0;
     for (i = 0; i <= LiegeBastogneLiege; ++i) {
         if (strcmp(input.biker_position, "DNF") != 0 && strcmp(input.biker_position, "OTL") != 0) {
@@ -289,22 +360,25 @@ int point_calculator(struct input_lines input, int m) {
     return participation_points + placements_points + podium_points;
 }
 
-void danish_bikers(struct racer input[], struct racer output[], int *races_participated_in) {
+void danish_bikers(struct racer input[], struct racer danes_array[], int *races_participated_in) {
+    /*Finds danes within the race_array, and puts these into danes_array as well as updates the array of the amount of races
+     * they've participated in. The array key in danes_array and races_participated in is the same, and therefor
+     * one can link the inputs.*/
     int i, k = -1;
     for (i = 0; i <= string_counter("\n"); ++i) {
         if (strcmp(input[i].biker_nation, "DEN") == 0) {
             if (participated_races(input[i]) > 0) {
                 k++;
-                strcpy(output[k].biker_first_name, input[i].biker_first_name);
-                strcpy(output[k].biker_last_name, input[i].biker_last_name);
+                strcpy(danes_array[k].biker_first_name, input[i].biker_first_name);
+                strcpy(danes_array[k].biker_last_name, input[i].biker_last_name);
                 races_participated_in[k] = participated_races(input[i]);
-
             }
         }
     }
 }
 
 int participated_races(struct racer input) {
+    /*Counts the anount of races a dane has completed*/
     int j, count = 0;
     for (j = 0; j <= LiegeBastogneLiege; ++j) {
         if (strcmp(input.race_stats[j].biker_position, "DNF") != 0) {
@@ -393,8 +467,6 @@ void shortest_time_two_races(struct racer input[]) {
     qsort(input, string_counter("\n"), sizeof(struct racer), seconds_sorter);
     seconds_to_string_converter(input);
     shortest_time_printer(input);
-
-
 }
 
 void shortest_time_printer(struct racer input[]) {
@@ -415,6 +487,7 @@ void shortest_time_printer(struct racer input[]) {
 }
 
 void time_calculator(struct racer input[]) {
+    /*Calculates the amount of time spent on both races combined. */
     int i, j;
     int hours = 0, seconds = 0, minutes = 0, result = 0, totalhours = 0, totalminutes = 0, totalseconds = 0;
     for (i = 0; i < string_counter("\n"); ++i) {
@@ -422,7 +495,6 @@ void time_calculator(struct racer input[]) {
         totalhours = 0;
         totalminutes = 0;
         totalseconds = 0;
-
         for (j = 0; j <= AmstelGoldRace; ++j) {
             if (input[i].race_stats[j].participated == 1) {
                 if (strcmp(input[i].race_stats[j].race_time, "-") != 0) {
@@ -480,8 +552,6 @@ void average_age(struct racer input[]) {
         for (j = 0; j < LiegeBastogneLiege; ++j) {
             if (strcmp(input[i].race_stats[j].biker_position, "DNF") ||
                 strcmp(input[i].race_stats[j].biker_position, "OTL")) {
-
-
                 if (atoi(input[i].race_stats[j].biker_position) > 10 && bool != 1) {
                     bool = 1;
                     sum += input[i].biker_age;
