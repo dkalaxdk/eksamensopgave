@@ -87,6 +87,8 @@ void shortest_time_printer(struct racer input[]);
 
 void seconds_to_string_converter(struct racer input[]);
 
+void average_age(struct racer input[]);
+
 int main() {
     struct input_lines *input_arrary;
     struct racer *races_array;
@@ -119,6 +121,8 @@ int main() {
 
     top_ten(races_array);
     shortest_time_two_races(races_array);
+
+    average_age(races_array);
 
     return 0;
 }
@@ -468,6 +472,26 @@ void seconds_to_string_converter(struct racer input[]) {
     }
 }
 
-void average_age() {
+void average_age(struct racer input[]) {
+    int i, j, count = 0, bool = 0;
+    double sum = 0, average_age;
+    for (i = 0; i < string_counter("\n"); ++i) {
+        bool = 0;
+        for (j = 0; j < LiegeBastogneLiege; ++j) {
+            if (strcmp(input[i].race_stats[j].biker_position, "DNF") ||
+                strcmp(input[i].race_stats[j].biker_position, "OTL")) {
 
+
+                if (atoi(input[i].race_stats[j].biker_position) > 10 && bool != 1) {
+                    bool = 1;
+                    sum += input[i].biker_age;
+                    count++;
+                }
+
+            }
+        }
+    }
+    average_age = sum / count;
+    printf("\n \n Average age of top 10: \n"
+           "  Is:  %lf \n", average_age);
 }
