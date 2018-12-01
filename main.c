@@ -399,7 +399,19 @@ int participated_races(struct racer input) {
     return count;
 }
 
+int number_of_nationality(struct racer input[]) {
+    /*Helper function for danes_printer, returns the amount of danish riders*/
+    int i, count = 0;
+    for (i = 0; i < string_counter("\n"); ++i) {
+        if (strcmp(input[i].biker_nation, "DEN") == 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
 void danes_printer(struct racer input[], int races_participated_in[], int number_of_danes) {
+    /*Helper function for danish bikers, prints the result.*/
     int i;
     printf("\nThe danes: \n");
     for (i = 0; i < number_of_danes; ++i) {
@@ -411,17 +423,25 @@ void danes_printer(struct racer input[], int races_participated_in[], int number
     }
 }
 
-int number_of_nationality(struct racer input[]) {
-    int i, count = 0;
-    for (i = 0; i < string_counter("\n"); ++i) {
-        if (strcmp(input[i].biker_nation, "DEN") == 0) {
-            count++;
-        }
+void top_ten(struct racer input[]) {
+    /*Top ten calculater, this function calculates the top ten riders based on the input array*/
+    int i;
+    printf("\n \n \n");
+    /*This function is called to calculate the total amount of points gathered through the races.*/
+    total_point_calculator(input);
+    /*Sorts the riders in order of the above calculated points (Highest to lowest)*/
+    qsort(input, string_counter("\n"), sizeof(struct racer), top_ten_compare);
+    /*Prints the first 10 entries in the sorted struct array. (Top ten)*/
+    printf("Top 10: \n \n");
+    for (i = 0; i < 10; ++i) {
+        printf(" \t [%d] Name : %s %s | Points %d \n", i + 1, input[i].biker_first_name, input[i].biker_last_name,
+               input[i].total_points);
     }
-    return count;
+
 }
 
 void total_point_calculator(struct racer input[]) {
+    /*Helper function for top ten, calculates the total amount of points*/
     int total = 0, i, j;
     for (i = 0; i < string_counter("\n"); ++i) {
         total = 0;
@@ -432,34 +452,18 @@ void total_point_calculator(struct racer input[]) {
     }
 }
 
-void top_ten(struct racer input[]) {
-    int i;
-    printf("\n \n \n");
-    total_point_calculator(input);
-
-    qsort(input, string_counter("\n"), sizeof(struct racer), top_ten_compare);
-
-    printf("Top 10: \n \n");
-    for (i = 0; i < 10; ++i) {
-        printf(" \t [%d] Name : %s %s | Points %d \n", i + 1, input[i].biker_first_name, input[i].biker_last_name,
-               input[i].total_points);
-    }
-
-}
 
 int top_ten_compare(const void *a, const void *b) {
+    /*Top ten comparison helper for qsort in the top_ten function*/
     struct racer *ia = (struct racer *) a;
     struct racer *ib = (struct racer *) b;
     int result = ib->total_points - ia->total_points;
 
-    if (result < 0) {
-        return -1;
+    if (result == 0) {
+        return strcmp(ia->biker_last_name, ib->biker_last_name);
+    } else {
+        return result;
     }
-    if (result > 0) {
-        return 1;
-    }
-    result = strcmp(ia->biker_last_name, ib->biker_last_name);
-    return result;
 }
 
 void shortest_time_two_races(struct racer input[]) {
@@ -469,25 +473,9 @@ void shortest_time_two_races(struct racer input[]) {
     shortest_time_printer(input);
 }
 
-void shortest_time_printer(struct racer input[]) {
-    int i = 0, k = 0, j = 0;
-    while (input[i].temp_time_cmp == -1) {
-        i++;
-    }
-    k = i;
-
-    while (input[k].temp_time_cmp == input[k + 1].temp_time_cmp) {
-        k++;
-    }
-    printf("\n \nTop rider%s on ParisRoubaix and AmstelGoldRace\n", k > 1 ? "s" : "");
-    for (j = i; j <= k; ++j) {
-        printf("\t The biker%s: %s %s came first with the time %s h\n", k > 1 ? "s" : "", input[j].biker_first_name,
-               input[j].biker_last_name, input[j].temp_time_cmp_string);
-    }
-}
-
 void time_calculator(struct racer input[]) {
-    /*Calculates the amount of time spent on both races combined. */
+    /*Calculates the amount of time spent on both races combined. Returns this in seconds added to the tmp_time_cmp
+     * part of the race struct.*/
     int i, j;
     int hours = 0, seconds = 0, minutes = 0, result = 0, totalhours = 0, totalminutes = 0, totalseconds = 0;
     for (i = 0; i < string_counter("\n"); ++i) {
@@ -518,12 +506,6 @@ void time_calculator(struct racer input[]) {
     }
 }
 
-int time_to_seconds_converter(int hours, int minutes, int seconds) {
-    hours = hours * 3600;
-    minutes = minutes * 60;
-    return hours + minutes + seconds;
-}
-
 int seconds_sorter(const void *a, const void *b) {
     struct racer *ia = (struct racer *) a;
     struct racer *ib = (struct racer *) b;
@@ -532,6 +514,7 @@ int seconds_sorter(const void *a, const void *b) {
 }
 
 void seconds_to_string_converter(struct racer input[]) {
+    /*Converts the seconds back into a string, to make it easier to print*/
     int i, hours, minutes, seconds, remainder;
     for (i = 0; i < string_counter("\n"); ++i) {
         if (input[i].temp_time_cmp > 0) {
@@ -544,7 +527,33 @@ void seconds_to_string_converter(struct racer input[]) {
     }
 }
 
+int time_to_seconds_converter(int hours, int minutes, int seconds) {
+    /*Convets hours,minutes and seconds into seconds*/
+    hours = hours * 3600;
+    minutes = minutes * 60;
+    return hours + minutes + seconds;
+}
+
+void shortest_time_printer(struct racer input[]) {
+    /*Helper function for shortest_time_two_races, prints the result.*/
+    int i = 0, k = 0, j = 0;
+    while (input[i].temp_time_cmp == -1) {
+        i++;
+    }
+    k = i;
+
+    while (input[k].temp_time_cmp == input[k + 1].temp_time_cmp) {
+        k++;
+    }
+    printf("\n \nTop rider%s on ParisRoubaix and AmstelGoldRace\n", k > 1 ? "s" : "");
+    for (j = i; j <= k; ++j) {
+        printf("\t The biker%s: %s %s came first with the time %s h\n", k > 1 ? "s" : "", input[j].biker_first_name,
+               input[j].biker_last_name, input[j].temp_time_cmp_string);
+    }
+}
+
 void average_age(struct racer input[]) {
+    /*Finds and calculates the average age of top 10.*/
     int i, j, count_racers = 0;
     double sum = 0.0, average_age;
     for (i = 0; i <= string_counter("\n"); ++i) {
